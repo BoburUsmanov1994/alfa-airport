@@ -1,18 +1,19 @@
 import React, {useRef, useState} from 'react';
 import {PageHeader} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
-import {Button, DatePicker, Drawer, Dropdown, Form, Input, Space, Spin, Tag} from "antd";
+import {Button, DatePicker, Drawer, Dropdown, Form, Input, notification, Space, Spin, Tag} from "antd";
 import Datagrid from "../../../containers/datagrid";
 import {URLS} from "../../../constants/url";
 import {useNavigate} from "react-router-dom";
-import {get, isEqual} from "lodash"
+import {get, head, isEqual, last} from "lodash"
 import numeral from "numeral";
 import dayjs from "dayjs";
-import {EyeOutlined, StopOutlined} from "@ant-design/icons";
+import {DownloadOutlined, EyeOutlined, StopOutlined} from "@ant-design/icons";
 import {isNil} from "lodash/lang";
 import {usePostQuery} from "../../../hooks/api";
 import useAuth from "../../../hooks/auth/useAuth";
 import config from "../../../config";
+import {request} from "../../../services/api";
 
 const color = {
     sent: 'green',
@@ -26,6 +27,7 @@ const ListPage = () => {
     const actionRef = useRef(null);
     const {user} = useAuth()
     const [record, setRecord] = useState(null);
+    const [loading,setLoading] = useState(false);
     const [form] = Form.useForm();
     const {mutate, isPending} = usePostQuery({})
     const handleClick = ({key}, _record) => {
@@ -69,7 +71,7 @@ const ListPage = () => {
                     columns={[
                         {
                             title: t('Номер транзакции'),
-                            dataIndex: 'ticket_number',
+                            dataIndex: 'external_transaction_id',
                             render: (_, record) => get(record, 'external_transaction_id'),
                             width: 175,
                         },
@@ -220,7 +222,40 @@ const ListPage = () => {
                         },
 
                     ]}
-                    url={URLS.insurances}/>
+                    url={URLS.insurances}>
+                    {({actionRef})=> <Button loading={loading}  type={'dashed'}   icon={<DownloadOutlined />} onClick={() =>{
+                        const {status,sentDate,external_transaction_id,policy_number,...rest} = formRef?.current?.getFieldsValue?.()
+                        const {current, pageSize} = actionRef?.current?.pageInfo
+                        setLoading(true)
+                        request.get(URLS.generalReport,{
+                            params: {
+                                fromDate:head(sentDate),
+                                toDate:last(sentDate),
+                                page: current-1,
+                                limit: pageSize,
+                                external_transaction_id,
+                                policy_number,
+                                status
+                            },
+                            responseType: 'blob',
+                        }).then(res => {
+                            const blob = new Blob([res.data], { type: res.data.type });
+                            const blobUrl = URL.createObjectURL(blob);
+                            window.open(blobUrl,'_self')
+                            notification['success']({
+                                message: 'Успешно'
+                            })
+                        }).catch((err)=>{
+                            notification['error']({
+                                message: err?.response?.data?.message || 'Ошибка'
+                            })
+                        }).finally(()=>{
+                            setLoading(false)
+                        })
+                    }}>
+                        {t('Отчет')}
+                    </Button>}
+                </Datagrid>
             </PageHeader>
             <Drawer open={!isNil(record)} onClose={() => setRecord(null)} title={t('Аннулировать')}>
                 <Spin spinning={isPending}>

@@ -5,4 +5,5 @@ export const URLS = {
     cancelInsurance: 'api/insurance/cancel',
     show: 'api/insurance/show',
     changePassword: 'api/auth/change-password',
+    generalReport: 'api/insurance/report',
 }
