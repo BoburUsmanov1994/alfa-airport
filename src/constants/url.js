@@ -6,4 +6,5 @@ export const URLS = {
     show: 'api/insurance/show',
     changePassword: 'api/auth/change-password',
     generalReport: 'api/insurance/report',
+    polisReport: 'api/insurance/polis-report',
 }

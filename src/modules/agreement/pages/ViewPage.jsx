@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {PageHeader} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
 import {
-    Button, Card, Col, DatePicker, Drawer, Form, Input, Row, Space,
+    Button, Card, Col, DatePicker, Drawer, Form, Input, notification, Row, Space,
     Spin, Statistic
 } from "antd";
 import {useNavigate, useParams} from "react-router-dom";
@@ -10,10 +10,11 @@ import {useGetAllQuery, usePostQuery} from "../../../hooks/api";
 import {URLS} from "../../../constants/url";
 import {KEYS} from "../../../constants/key";
 import {DownloadOutlined} from "@ant-design/icons";
-import {get, isEqual} from "lodash"
+import {get, head, isEqual, last} from "lodash"
 import dayjs from "dayjs";
 import config from "../../../config";
 import useAuth from "../../../hooks/auth/useAuth";
+import {request} from "../../../services/api";
 
 
 const ViewPage = () => {
@@ -24,6 +25,7 @@ const ViewPage = () => {
     const [open, setOpen] = useState(false);
     const {mutate, isPending} = usePostQuery({})
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
 
     let {data, isLoading, refetch} = useGetAllQuery({
         key: [KEYS.show, id],
@@ -54,10 +56,33 @@ const ViewPage = () => {
                 title={t('Карточка полиса')}
                 onBack={() => navigate(-1)}
                 extra={[
-                    <Button icon={<DownloadOutlined/>} type={'dashed'}>
+                    <Button
+                        loading={loading}
+                        onClick={() => {
+                            setLoading(true)
+                            request.get(`${URLS.polisReport}/${id}`, {
+                                params: {},
+                                responseType: 'blob',
+                            }).then(res => {
+                                const blob = new Blob([res.data], {type: res.data.type});
+                                const blobUrl = URL.createObjectURL(blob);
+                                window.open(blobUrl, '_self')
+                                notification['success']({
+                                    message: 'Успешно'
+                                })
+                            }).catch((err) => {
+                                notification['error']({
+                                    message: err?.response?.data?.message || 'Ошибка'
+                                })
+                            }).finally(() => {
+                                setLoading(false)
+                            })
+                        }}
+                        icon={<DownloadOutlined/>} type={'dashed'}>
                         {t('Скачать в Excel')}
                     </Button>,
-                    isEqual(get(data, 'data.status'), 'sent') && isEqual(get(user, 'role'), config.ROLES.operator) && <Button onClick={() => {
+                    isEqual(get(data, 'data.status'), 'sent') && isEqual(get(user, 'role'), config.ROLES.operator) &&
+                    <Button onClick={() => {
                         form.setFieldValue('ticket_number', get(data, 'data.ticketData.ticket_number'))
                         form.setFieldValue('policy_number', get(data, 'data.policyDetails.number', '-'))
                         setOpen(true)
