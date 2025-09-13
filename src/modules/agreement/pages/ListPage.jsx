@@ -5,7 +5,7 @@ import {Button, DatePicker, Drawer, Dropdown, Form, Input, notification, Space, 
 import Datagrid from "../../../containers/datagrid";
 import {URLS} from "../../../constants/url";
 import {useNavigate} from "react-router-dom";
-import {get, head, isEqual, last} from "lodash"
+import {get, head, isEqual, join, last, reverse, split} from "lodash"
 import numeral from "numeral";
 import dayjs from "dayjs";
 import {DownloadOutlined, EyeOutlined, StopOutlined} from "@ant-design/icons";
@@ -83,16 +83,16 @@ const ListPage = () => {
                         },
                         {
                             title: t('Страховая сумма'),
-                            dataIndex: 'insuranceForeignSum',
-                            render: (value) => numeral(value).format('0,0.00'),
+                            dataIndex: 'policyDetails',
+                            render: (value,_record) => numeral(get(value,'insuranceSum')).format('0,0.00') + ` ${get(_record,'policyData.currency','')}`,
                             align: 'center',
                             width: 150,
                             hideInSearch: true,
                         },
                         {
                             title: t('Страховая премия'),
-                            dataIndex: 'insuranceForeignPremium',
-                            render: (value) => numeral(value).format('0,0.00'),
+                            dataIndex: 'policyDetails',
+                            render: (value,_record) => numeral(get(value,'insurancePremium')).format('0,0.00') + ` ${get(_record,'policyData.currency','')}`,
                             align: 'center',
                             width: 150,
                             hideInSearch: true,
@@ -103,7 +103,7 @@ const ListPage = () => {
                             hideInSearch: true,
                             width: 150,
                             align: 'center',
-                            render: (value) => get(value, 'ticket_number'),
+                            render: (value) => get(value, 'ticketNumber'),
                         },
                         {
                             title: t('Фамилия пассажира'),
@@ -111,7 +111,7 @@ const ListPage = () => {
                             hideInSearch: true,
                             width: 150,
                             align: 'center',
-                            render: (value) => get(value, 'surname_passenger'),
+                            render: (value) => get(value, 'lastName'),
                         },
                         {
                             title: t('Имя пассажира'),
@@ -119,7 +119,7 @@ const ListPage = () => {
                             hideInSearch: true,
                             width: 150,
                             align: 'center',
-                            render: (value) => get(value, 'name_passenger'),
+                            render: (value) => get(value, 'firstName'),
                         },
                         {
                             title: t('Количество мест застрахованного багажа'),
@@ -127,7 +127,7 @@ const ListPage = () => {
                             hideInSearch: true,
                             width: 125,
                             align: 'center',
-                            render: (value) => get(value, 'baggage_count'),
+                            render: (value) => get(value, 'baggageCount'),
                         },
                         {
                             title: t('Номер рейса'),
@@ -143,7 +143,7 @@ const ListPage = () => {
                             hideInSearch: true,
                             width: 150,
                             align: 'center',
-                            render: (value) => dayjs(value).format('YYYY-MM-DD HH:mm'),
+                            render: (value) => dayjs(value).format('DD.MM.YYYY HH:mm'),
                         },
                         {
                             title: t('Статус полиса'),
@@ -176,12 +176,17 @@ const ListPage = () => {
                             title: t('Период дат'),
                             dataIndex: 'sentDate',
                             valueType: 'dateRange',
+                            fieldProps: {
+                                format: 'DD.MM.YYYY',
+                            },
                             initialValue: [dayjs().add(-1, 'M'), dayjs()],
                             search: {
-                                transform: (value) => ({
-                                    fromDate: value[0],
-                                    toDate: value[1],
-                                }),
+                                transform: (value) => {
+                                    return({
+                                        fromDate: join(reverse(split(value[0],'.')),'-'),
+                                        toDate: join(reverse(split(value[1],'.')),'-'),
+                                    })
+                                },
                             },
                             hideInTable: true,
                         },

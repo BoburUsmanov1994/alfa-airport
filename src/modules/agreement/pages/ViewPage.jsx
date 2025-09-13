@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 import config from "../../../config";
 import useAuth from "../../../hooks/auth/useAuth";
 import {request} from "../../../services/api";
+import numeral from "numeral";
 
 
 const ViewPage = () => {
@@ -102,31 +103,31 @@ const ViewPage = () => {
                                        value={`${get(data, 'data.policyDetails.seria', '-')}${get(data, 'data.policyDetails.number', '-')}`}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
-                            <Statistic title={t("Страховая сумма")} value={get(data, 'data.insuranceForeignSum', 0)}/>
+                            <Statistic title={t("Страховая сумма")} value={`${numeral(get(data, 'data.policyDetails.insuranceSum', 0)).format()} ${get(data, 'data.policyData.purchaseCurrency', '')}`}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic title={t("Страховая премия")}
-                                       value={get(data, 'data.insuranceForeignPremium', 0)}/>
+                                       value={`${numeral(get(data, 'data.policyDetails.insurancePremium', 0)).format()} ${get(data, 'data.policyData.purchaseCurrency', '')}`}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Номер билета")}
-                                       value={get(data, 'data.ticketData.ticket_number', '-')}/>
+                                       value={get(data, 'data.ticketData.ticketNumber', '-')}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Фамилия пассажира")}
-                                       value={get(data, 'data.insurant.surname_passenger', '-')}/>
+                                       value={get(data, 'data.insurant.lastName', '-')}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Имя пассажира")}
-                                       value={get(data, 'data.insurant.name_passenger', '-')}/>
+                                       value={get(data, 'data.insurant.firstName', '-')}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Гражданство")}
-                                       value={get(data, 'data.insurant.citizenship', '-')}/>
+                                       value={get(data, 'data.insurant.nationality', '-')}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Количество мест застрахованного багажа")}
-                                       value={get(data, 'data.ticketData.baggage_count', '-')}/>
+                                       value={get(data, 'data.ticketData.baggageCount', '-')}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Номер рейса")}
@@ -134,7 +135,7 @@ const ViewPage = () => {
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Дата начала действия полиса")}
-                                       value={get(data, 'data.sentDate') ? dayjs(get(data, 'data.sentDate')).format("YYYY-MM-DD HH:mm") : '-'}/>
+                                       value={get(data, 'data.sentDate') ? dayjs(get(data, 'data.sentDate')).format("DD.MM.YYYY HH:mm") : '-'}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic valueStyle={{color: isEqual(get(data, 'data.status'), 'sent') ? 'green' : 'red'}}
