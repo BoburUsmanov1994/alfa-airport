@@ -108,7 +108,7 @@ const ViewPage = () => {
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic title={t("Страховая премия")}
-                                       value={isEqual(get(data, 'data.policyData.currency', ''), 'UZS') ? `${numeral(get(data, 'data.policyDetails.insuranceSum', 0)).format()} ${get(data, 'data.policyData.currency', '')}` : `${numeral(get(data, 'data.insuranceForeignPremium', 0)).format()} ${get(data, 'data.policyData.currency', '')}`}/>
+                                       value={isEqual(get(data, 'data.policyData.currency', ''), 'UZS') ? `${numeral(get(data, 'data.policyDetails.insurancePremium', 0)).format()} ${get(data, 'data.policyData.currency', '')}` : `${numeral(get(data, 'data.insuranceForeignPremium', 0)).format()} ${get(data, 'data.policyData.currency', '')}`}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Номер билета")}
