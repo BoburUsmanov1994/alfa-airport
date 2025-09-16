@@ -103,31 +103,32 @@ const ViewPage = () => {
                                        value={`${get(data, 'data.policyDetails.seria', '-')}${get(data, 'data.policyDetails.number', '-')}`}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
-                            <Statistic title={t("Страховая сумма")} value={`${numeral(get(data, 'data.policyDetails.insuranceSum', 0)).format()} ${get(data, 'data.policyData.purchaseCurrency', '')}`}/>
+                            <Statistic title={t("Страховая сумма")}
+                                       value={isEqual(get(data, 'data.policyData.currency', ''), 'UZS') ? `${numeral(get(data, 'data.policyDetails.insuranceSum', 0)).format()} ${get(data, 'data.policyData.currency', '')}` : `${numeral(get(data, 'data.insuranceForeignSum', 0)).format()} ${get(data, 'data.policyData.currency', '')}`}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic title={t("Страховая премия")}
-                                       value={`${numeral(get(data, 'data.policyDetails.insurancePremium', 0)).format()} ${get(data, 'data.policyData.purchaseCurrency', '')}`}/>
+                                       value={isEqual(get(data, 'data.policyData.currency', ''), 'UZS') ? `${numeral(get(data, 'data.policyDetails.insuranceSum', 0)).format()} ${get(data, 'data.policyData.currency', '')}` : `${numeral(get(data, 'data.insuranceForeignPremium', 0)).format()} ${get(data, 'data.policyData.currency', '')}`}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Номер билета")}
-                                       value={get(data, 'data.ticketData.ticketNumber', '-')}/>
+                                       value={get(data, 'data.ticketData.ticket_number', '-')}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Фамилия пассажира")}
-                                       value={get(data, 'data.insurant.lastName', '-')}/>
+                                       value={get(data, 'data.insurant.surname_passenger', '-')}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Имя пассажира")}
-                                       value={get(data, 'data.insurant.firstName', '-')}/>
+                                       value={get(data, 'data.insurant.name_passenger', '-')}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Гражданство")}
-                                       value={get(data, 'data.insurant.nationality', '-')}/>
+                                       value={get(data, 'data.insurant.citizenship', '-')}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Количество мест застрахованного багажа")}
-                                       value={get(data, 'data.ticketData.baggageCount', '-')}/>
+                                       value={get(data, 'data.ticketData.baggage_count', '-')}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Номер рейса")}

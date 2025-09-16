@@ -27,7 +27,7 @@ const ListPage = () => {
     const actionRef = useRef(null);
     const {user} = useAuth()
     const [record, setRecord] = useState(null);
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
     const {mutate, isPending} = usePostQuery({})
     const handleClick = ({key}, _record) => {
@@ -73,7 +73,7 @@ const ListPage = () => {
                             title: t('Номер транзакции'),
                             dataIndex: 'external_transaction_id',
                             render: (_, record) => get(record, 'external_transaction_id'),
-                            width: 175,
+                            width: 200,
                         },
                         {
                             title: t('Номер страхового полиса'),
@@ -84,7 +84,7 @@ const ListPage = () => {
                         {
                             title: t('Страховая сумма'),
                             dataIndex: 'policyDetails',
-                            render: (value,_record) => numeral(get(value,'insuranceSum')).format('0,0.00') + ` ${get(_record,'policyData.currency','')}`,
+                            render: (value, _record) => !isEqual(get(_record, 'policyData.currency'), 'UZS') ? numeral(get(_record, 'insuranceForeignSum')).format('0,0.00') + ` ${get(_record, 'policyData.currency', '')}` : numeral(get(value, 'insuranceSum')).format('0,0.00') + ` ${get(_record, 'policyData.currency', '')}`,
                             align: 'center',
                             width: 150,
                             hideInSearch: true,
@@ -92,7 +92,7 @@ const ListPage = () => {
                         {
                             title: t('Страховая премия'),
                             dataIndex: 'policyDetails',
-                            render: (value,_record) => numeral(get(value,'insurancePremium')).format('0,0.00') + ` ${get(_record,'policyData.currency','')}`,
+                            render: (value, _record) => !isEqual(get(_record, 'policyData.currency'), 'UZS') ? numeral(get(_record, 'insuranceForeignPremium')).format('0,0.00') + ` ${get(_record, 'policyData.currency', '')}` : numeral(get(value, 'insurancePremium')).format('0,0.00') + ` ${get(_record, 'policyData.currency', '')}`,
                             align: 'center',
                             width: 150,
                             hideInSearch: true,
@@ -103,7 +103,7 @@ const ListPage = () => {
                             hideInSearch: true,
                             width: 150,
                             align: 'center',
-                            render: (value) => get(value, 'ticketNumber'),
+                            render: (value) => get(value, 'ticket_number'),
                         },
                         {
                             title: t('Фамилия пассажира'),
@@ -111,7 +111,7 @@ const ListPage = () => {
                             hideInSearch: true,
                             width: 150,
                             align: 'center',
-                            render: (value) => get(value, 'lastName'),
+                            render: (value) => get(value, 'surname_passenger'),
                         },
                         {
                             title: t('Имя пассажира'),
@@ -119,7 +119,7 @@ const ListPage = () => {
                             hideInSearch: true,
                             width: 150,
                             align: 'center',
-                            render: (value) => get(value, 'firstName'),
+                            render: (value) => get(value, 'name_passenger'),
                         },
                         {
                             title: t('Количество мест застрахованного багажа'),
@@ -127,7 +127,7 @@ const ListPage = () => {
                             hideInSearch: true,
                             width: 125,
                             align: 'center',
-                            render: (value) => get(value, 'baggageCount'),
+                            render: (value) => get(value, 'baggage_count'),
                         },
                         {
                             title: t('Номер рейса'),
@@ -179,12 +179,12 @@ const ListPage = () => {
                             fieldProps: {
                                 format: 'DD.MM.YYYY',
                             },
-                            initialValue: [dayjs().add(-1, 'M'), dayjs()],
+                            initialValue: [dayjs().add(-1, 'd'), dayjs()],
                             search: {
                                 transform: (value) => {
-                                    return({
-                                        fromDate: join(reverse(split(value[0],'.')),'-'),
-                                        toDate: join(reverse(split(value[1],'.')),'-'),
+                                    return ({
+                                        fromDate: join(reverse(split(value[0], '.')), '-'),
+                                        toDate: join(reverse(split(value[1], '.')), '-'),
                                     })
                                 },
                             },
@@ -228,36 +228,43 @@ const ListPage = () => {
 
                     ]}
                     url={URLS.insurances}>
-                    {({actionRef})=> <Button loading={loading}  type={'dashed'}   icon={<DownloadOutlined />} onClick={() =>{
-                        const {status,sentDate,external_transaction_id,policy_number,...rest} = formRef?.current?.getFieldsValue?.()
-                        const {current, pageSize} = actionRef?.current?.pageInfo
-                        setLoading(true)
-                        request.get(URLS.generalReport,{
-                            params: {
-                                fromDate:head(sentDate),
-                                toDate:last(sentDate),
-                                page: current-1,
-                                limit: pageSize,
-                                external_transaction_id,
-                                policy_number,
-                                status
-                            },
-                            responseType: 'blob',
-                        }).then(res => {
-                            const blob = new Blob([res.data], { type: res.data.type });
-                            const blobUrl = URL.createObjectURL(blob);
-                            window.open(blobUrl,'_self')
-                            notification['success']({
-                                message: 'Успешно'
-                            })
-                        }).catch((err)=>{
-                            notification['error']({
-                                message: err?.response?.data?.message || 'Ошибка'
-                            })
-                        }).finally(()=>{
-                            setLoading(false)
-                        })
-                    }}>
+                    {({actionRef}) => <Button loading={loading} type={'dashed'} icon={<DownloadOutlined/>}
+                                              onClick={() => {
+                                                  const {
+                                                      status,
+                                                      sentDate,
+                                                      external_transaction_id,
+                                                      policy_number,
+                                                      ...rest
+                                                  } = formRef?.current?.getFieldsValue?.()
+                                                  const {current, pageSize} = actionRef?.current?.pageInfo
+                                                  setLoading(true)
+                                                  request.get(URLS.generalReport, {
+                                                      params: {
+                                                          fromDate: dayjs(head(sentDate)).format('YYYY-MM-DD'),
+                                                          toDate: dayjs(last(sentDate)).format('YYYY-MM-DD'),
+                                                          page: current - 1,
+                                                          limit: pageSize,
+                                                          external_transaction_id,
+                                                          policy_number,
+                                                          status
+                                                      },
+                                                      responseType: 'blob',
+                                                  }).then(res => {
+                                                      const blob = new Blob([res.data], {type: res.data.type});
+                                                      const blobUrl = URL.createObjectURL(blob);
+                                                      window.open(blobUrl, '_self')
+                                                      notification['success']({
+                                                          message: 'Успешно'
+                                                      })
+                                                  }).catch((err) => {
+                                                      notification['error']({
+                                                          message: err?.response?.data?.message || 'Ошибка'
+                                                      })
+                                                  }).finally(() => {
+                                                      setLoading(false)
+                                                  })
+                                              }}>
                         {t('Отчет')}
                     </Button>}
                 </Datagrid>
