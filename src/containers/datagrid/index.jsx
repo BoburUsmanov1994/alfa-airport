@@ -57,6 +57,9 @@ const Index = ({
                 rowSelection={rowSelection}
                 actionRef={actionRef}
                 cardBordered
+                options={{
+                    setting: false
+                }}
                 request={async (params, sorter, filter) => {
                     // console.log(params, sorter, filter)
                     const {current, pageSize, ...rest} = params;
