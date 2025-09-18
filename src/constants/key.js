@@ -4,5 +4,6 @@ export const KEYS = {
     cancelInsurance: 'cancelInsurance',
     show: 'show',
     changePassword: 'changePassword',
-    generalReport: 'generalReport'
+    generalReport: 'generalReport',
+    sendPolicy: 'sendPolicy',
 }

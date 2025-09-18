@@ -7,4 +7,6 @@ export const URLS = {
     changePassword: 'api/auth/change-password',
     generalReport: 'api/insurance/report',
     polisReport: 'api/insurance/polis-report',
+    sendPolicy: 'api/insurance/send-policy',
+    saveEmail: 'api/insurance/save-email',
 }

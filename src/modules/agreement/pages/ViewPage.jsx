@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {PageHeader} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
 import {
@@ -27,6 +27,7 @@ const ViewPage = () => {
     const {mutate, isPending} = usePostQuery({})
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const submitType = useRef()
 
     let {data, isLoading, refetch} = useGetAllQuery({
         key: [KEYS.show, id],
@@ -45,6 +46,27 @@ const ViewPage = () => {
                 setOpen(false)
             }
         })
+    }
+    const onFinish = (_params) => {
+        if(submitType.current){
+            mutate({
+                url: URLS.sendPolicy,
+                attributes: {..._params,id}
+            }, {
+                onSuccess: () => {
+                    refetch()
+                }
+            })
+        }else{
+            mutate({
+                url: URLS.saveEmail,
+                attributes: {..._params,id}
+            }, {
+                onSuccess: () => {
+                    refetch()
+                }
+            })
+        }
     }
 
     if (isLoading) {
@@ -142,6 +164,24 @@ const ViewPage = () => {
                             <Statistic valueStyle={{color: isEqual(get(data, 'data.status'), 'sent') ? 'green' : 'red'}}
                                        formatter={(value) => value} title={t("Статус полиса")}
                                        value={t(get(data, 'data.status'))}/>
+                        </Col>
+                        <Col span={12} className={'mt-8'}>
+                            <Form onFinish={onFinish} initialValues={{
+                                email: get(data, 'data.insurant.email')
+                            }}>
+                                <Space align={'middle'}>
+                                    <Form.Item label={t('E-mail')} className={'min-w-96'} name={'email'}
+                                               rules={[{required: true}, {type: 'email'}]}>
+                                        <Input/>
+                                    </Form.Item>
+                                    <Form.Item>
+                                        <Space>
+                                            <Button loading={!submitType.current && isPending} onClick={() => (submitType.current = false)}  type={'dashed'} htmlType={'submit'}>{t('Сохранить')}</Button>
+                                            <Button loading={submitType.current && isPending} onClick={() => (submitType.current = true)}  type={'primary'} htmlType={'submit'}>{t('Отправить')}</Button>
+                                        </Space>
+                                    </Form.Item>
+                                </Space>
+                            </Form>
                         </Col>
                     </Row>
                 </Card>
