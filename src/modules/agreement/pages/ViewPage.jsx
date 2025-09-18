@@ -166,7 +166,7 @@ const ViewPage = () => {
                                        value={t(get(data, 'data.status'))}/>
                         </Col>
                         <Col span={12} className={'mt-8'}>
-                            <Form onFinish={onFinish} initialValues={{
+                            <Form disabled={isEqual(get(user, 'role'), config.ROLES.observer)} onFinish={onFinish} initialValues={{
                                 email: get(data, 'data.insurant.email')
                             }}>
                                 <Space align={'middle'}>
@@ -188,7 +188,7 @@ const ViewPage = () => {
             </PageHeader>
             <Drawer open={open} onClose={() => setOpen(false)} title={t('Аннулировать')}>
                 <Spin spinning={isPending}>
-                    <Form onFinish={annualInsuranceRequest} form={form} layout={'vertical'}>
+                    <Form  onFinish={annualInsuranceRequest} form={form} layout={'vertical'}>
                         <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
                                    name={'ticket_number'}
                                    label={t('Номер билета')}>
