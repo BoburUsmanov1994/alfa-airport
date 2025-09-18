@@ -166,7 +166,7 @@ const ViewPage = () => {
                                        value={t(get(data, 'data.status'))}/>
                         </Col>
                         <Col span={12} className={'mt-8'}>
-                            <Form disabled={isEqual(get(user, 'role'), config.ROLES.observer)} onFinish={onFinish} initialValues={{
+                            <Form disabled={isEqual(get(user, 'role'), config.ROLES.observer) || isEqual(get(data, 'data.status'), 'cancelled')} onFinish={onFinish} initialValues={{
                                 email: get(data, 'data.insurant.email')
                             }}>
                                 <Space align={'middle'}>
