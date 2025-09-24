@@ -145,6 +145,11 @@ const ViewPage = () => {
                                        value={get(data, 'data.insurant.name_passenger', '-')}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
+                            <Statistic formatter={(value) => value} title={t("Паспорт пассажира")}
+                                       value={get(data, 'data.insurant.document_number', '-')}/>
+                        </Col>
+
+                        <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Гражданство")}
                                        value={get(data, 'data.insurant.citizenship', '-')}/>
                         </Col>
@@ -158,6 +163,14 @@ const ViewPage = () => {
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Дата начала действия полиса")}
+                                       value={get(data, 'data.policyData.startDate') ? dayjs(get(data, 'data.policyData.startDate')).format("DD.MM.YYYY HH:mm") : '-'}/>
+                        </Col>
+                        <Col span={12} className={'mb-4'}>
+                            <Statistic formatter={(value) => value} title={t("Дата окончания действия полиса")}
+                                       value={get(data, 'data.policyData.endDate') ? dayjs(get(data, 'data.policyData.endDate')).format("DD.MM.YYYY HH:mm") : '-'}/>
+                        </Col>
+                        <Col span={12} className={'mb-4'}>
+                            <Statistic formatter={(value) => value} title={t("Дата оформления полиса")}
                                        value={get(data, 'data.sentDate') ? dayjs(get(data, 'data.sentDate')).format("DD.MM.YYYY HH:mm") : '-'}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>

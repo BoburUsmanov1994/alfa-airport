@@ -122,6 +122,14 @@ const ListPage = () => {
                             render: (value) => get(value, 'name_passenger'),
                         },
                         {
+                            title: t('Паспорт пассажира'),
+                            dataIndex: 'insurant',
+                            hideInSearch: true,
+                            width: 150,
+                            align: 'center',
+                            render: (value) => get(value, 'document_number'),
+                        },
+                        {
                             title: t('Количество мест застрахованного багажа'),
                             dataIndex: 'ticketData',
                             hideInSearch: true,
@@ -139,6 +147,14 @@ const ListPage = () => {
                         },
                         {
                             title: t('Дата начала действия полиса'),
+                            dataIndex: 'policyData',
+                            hideInSearch: true,
+                            width: 150,
+                            align: 'center',
+                            render: (value) => dayjs(get(value, 'startDate')).format('DD.MM.YYYY HH:mm'),
+                        },
+                        {
+                            title: t('Дата и время оформления полиса'),
                             dataIndex: 'sentDate',
                             hideInSearch: true,
                             width: 150,
@@ -149,7 +165,7 @@ const ListPage = () => {
                             title: t('Статус полиса'),
                             dataIndex: 'status',
                             hideInSearch: true,
-                            width: 125,
+                            width: 225,
                             align: 'center',
                             render: (value) => <Tag color={color[value] || 'default'}>{t(value)}</Tag>,
                         },
@@ -162,18 +178,18 @@ const ListPage = () => {
                             fieldProps: {
                                 options: [
                                     {
-                                        label: t('Действующий'),
+                                        label: t('Действующий (полис действует)'),
                                         value: 'sent',
                                     },
                                     {
-                                        label: t('Аннулирован'),
+                                        label: t('Аннулирован (полис отменен и не действует)'),
                                         value: 'cancelled',
                                     }
                                 ]
                             },
                         },
                         {
-                            title: t('Период дат'),
+                            title: t('Дата начала действия полиса'),
                             dataIndex: 'sentDate',
                             valueType: 'dateRange',
                             fieldProps: {
@@ -185,6 +201,23 @@ const ListPage = () => {
                                     return ({
                                         fromDate: join(reverse(split(value[0], '.')), '-'),
                                         toDate: join(reverse(split(value[1], '.')), '-'),
+                                    })
+                                },
+                            },
+                            hideInTable: true,
+                        },
+                        {
+                            title: t('Дата и время оформления полиса'),
+                            dataIndex: 'startDate',
+                            valueType: 'dateRange',
+                            fieldProps: {
+                                format: 'DD.MM.YYYY',
+                            },
+                            search: {
+                                transform: (value) => {
+                                    return ({
+                                        startFromDate: join(reverse(split(value[0], '.')), '-'),
+                                        startToDate: join(reverse(split(value[1], '.')), '-'),
                                     })
                                 },
                             },
