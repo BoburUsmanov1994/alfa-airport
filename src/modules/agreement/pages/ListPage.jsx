@@ -277,8 +277,8 @@ const ListPage = () => {
                                                       params: {
                                                           fromDate: sentDate ? dayjs(head(sentDate)).format('YYYY-MM-DD'):undefined,
                                                           toDate: sentDate? dayjs(last(sentDate)).format('YYYY-MM-DD') : undefined,
-                                                          startFromDate: startDate? dayjs(last(startDate)).format('YYYY-MM-DD'):undefined,
-                                                          startToDate: startDate?dayjs(last(startDate)).format('YYYY-MM-DD'):undefined,
+                                                          startFromDate: startDate? dayjs(head(startDate)).format('YYYY-MM-DD'):undefined,
+                                                          startToDate: startDate? dayjs(last(startDate)).format('YYYY-MM-DD'):undefined,
                                                           page: current - 1,
                                                           limit: pageSize,
                                                           external_transaction_id,
