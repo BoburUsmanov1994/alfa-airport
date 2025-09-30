@@ -14,6 +14,10 @@ import {usePostQuery} from "../../../hooks/api";
 import useAuth from "../../../hooks/auth/useAuth";
 import config from "../../../config";
 import {request} from "../../../services/api";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const color = {
     sent: 'green',
@@ -151,7 +155,7 @@ const ListPage = () => {
                             hideInSearch: true,
                             width: 150,
                             align: 'center',
-                            render: (value) => dayjs(get(value, 'startDate')).format('DD.MM.YYYY HH:mm'),
+                            render: (value) => dayjs.utc(get(value, 'startDate')).tz("Asia/Tashkent").format('DD.MM.YYYY HH:mm'),
                         },
                         {
                             title: t('Дата и время оформления полиса'),
@@ -159,7 +163,7 @@ const ListPage = () => {
                             hideInSearch: true,
                             width: 150,
                             align: 'center',
-                            render: (value) => dayjs(value).format('DD.MM.YYYY HH:mm'),
+                            render: (value) => dayjs.utc(value).tz("Asia/Tashkent").format('DD.MM.YYYY HH:mm'),
                         },
                         {
                             title: t('Статус полиса'),
