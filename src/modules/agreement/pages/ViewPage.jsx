@@ -16,6 +16,10 @@ import config from "../../../config";
 import useAuth from "../../../hooks/auth/useAuth";
 import {request} from "../../../services/api";
 import numeral from "numeral";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 
 const ViewPage = () => {
@@ -163,15 +167,15 @@ const ViewPage = () => {
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Дата начала действия полиса")}
-                                       value={get(data, 'data.policyData.startDate') ? dayjs(get(data, 'data.policyData.startDate')).format("DD.MM.YYYY HH:mm") : '-'}/>
+                                       value={get(data, 'data.policyData.startDate') ? dayjs.utc(get(data, 'data.policyData.startDate')).tz("Asia/Tashkent").format("DD.MM.YYYY HH:mm"): '-'}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Дата окончания действия полиса")}
-                                       value={get(data, 'data.policyData.endDate') ? dayjs(get(data, 'data.policyData.endDate')).format("DD.MM.YYYY HH:mm") : '-'}/>
+                                       value={get(data, 'data.policyData.endDate') ? dayjs.utc(get(data, 'data.policyData.endDate')).tz("Asia/Tashkent").format("DD.MM.YYYY HH:mm") : '-'}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic formatter={(value) => value} title={t("Дата оформления полиса")}
-                                       value={get(data, 'data.sentDate') ? dayjs(get(data, 'data.sentDate')).format("DD.MM.YYYY HH:mm") : '-'}/>
+                                       value={get(data, 'data.sentDate') ? dayjs.utc(get(data, 'data.sentDate')).tz("Asia/Tashkent").format("DD.MM.YYYY HH:mm") : '-'}/>
                         </Col>
                         <Col span={12} className={'mb-4'}>
                             <Statistic valueStyle={{color: isEqual(get(data, 'data.status'), 'sent') ? 'green' : 'red'}}
